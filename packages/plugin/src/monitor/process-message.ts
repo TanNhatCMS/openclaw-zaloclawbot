@@ -1,4 +1,4 @@
-import { createTypingCallbacks } from "openclaw/plugin-sdk/channel-runtime";
+import { createTypingCallbacks } from "openclaw/plugin-sdk/channel-outbound";
 import type { OpenClawConfig } from "openclaw/plugin-sdk/core";
 import { sendChatAction, type ZaloUpdate } from "../api/api.js";
 import { zaloUpdateToMsgContext } from "../messaging/inbound.js";

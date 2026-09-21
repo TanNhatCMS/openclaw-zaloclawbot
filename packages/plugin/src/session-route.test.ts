@@ -12,7 +12,6 @@ vi.mock("openclaw/plugin-sdk/core", () => ({
   buildChannelOutboundSessionRoute: (params: any) => ({
     sessionKey: `${params.channel}:${params.accountId}:${params.peer.id}`,
     mainSessionKey: `${params.channel}:${params.accountId}:${params.peer.id}`,
-    agentId: params.agentId,
   }),
 }));
 
@@ -53,7 +52,7 @@ describe("resolveClawbotOutboundSessionRoute", () => {
       accountId: "acct-1",
     });
     expect(result).not.toBeNull();
-    expect(result!.agentId).toBe("agent-1");
+    expect(result!.sessionKey).toContain("12345");
   });
 
   it("returns null for empty target", () => {

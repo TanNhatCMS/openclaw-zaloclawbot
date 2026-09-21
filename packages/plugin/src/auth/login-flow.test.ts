@@ -41,6 +41,7 @@ describe("persistClawbotLogin", () => {
       connected: true,
       botToken: "tok-123",
       botId: "bot-1",
+      message: "Login confirmed.",
     });
     expect(result.accountId).toBe("clawbot-test");
     expect(saveClawbotAccount).toHaveBeenCalled();
@@ -75,6 +76,7 @@ describe("runClawbotQrLoginLoop", () => {
     (waitForLogin as any).mockResolvedValue({
       connected: true,
       botToken: "tok-123",
+      message: "Login confirmed.",
     });
 
     const result = await runClawbotQrLoginLoop({

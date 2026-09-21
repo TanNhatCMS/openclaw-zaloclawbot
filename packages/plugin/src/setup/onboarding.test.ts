@@ -18,7 +18,7 @@ beforeEach(() => {
 
 describe("clawbotSetupWizard", () => {
   it("getStatus returns not configured when no accounts", async () => {
-    const status = await clawbotSetupWizard.getStatus();
+    const status = await clawbotSetupWizard.getStatus({} as any);
     expect(status.configured).toBe(false);
     expect(status.statusLines[0]).toContain("Not logged in");
   });
@@ -26,19 +26,23 @@ describe("clawbotSetupWizard", () => {
   it("getStatus returns configured when account has botToken", async () => {
     (listIndexedClawbotAccountIds as any).mockReturnValue(["acct-1"]);
     (loadClawbotAccount as any).mockReturnValue({ botToken: "tok-123" });
-    const status = await clawbotSetupWizard.getStatus();
+    const status = await clawbotSetupWizard.getStatus({} as any);
     expect(status.configured).toBe(true);
     expect(status.statusLines[0]).toContain("Logged in");
   });
 
-  it("configure returns skip when login not completed", async () => {
+  it("configure returns cfg unchanged when login not completed", async () => {
     const { runClawbotQrLoginLoop } = await import("../auth/login-flow.js");
     (runClawbotQrLoginLoop as any).mockResolvedValue(null);
 
     const result = await clawbotSetupWizard.configure!({
       cfg: {} as any,
       prompter: { note: vi.fn(), progress: vi.fn().mockReturnValue({ stop: vi.fn() }) } as any,
-    });
+      runtime: {} as any,
+      accountOverrides: [],
+      shouldPromptAccountIds: false,
+      forceAllowFrom: false,
+    } as any);
     expect(result).toEqual({ cfg: {} });
   });
 

@@ -1,24 +1,8 @@
-# openclaw-zaloclawbot
+# @zalo-platforms/openclaw-zaloclawbot
 
-Monorepo containing the Zalo ClawBot ecosystem for [OpenClaw](https://www.npmjs.com/package/openclaw).
+Official Zalo channel plugin for [OpenClaw](https://www.npmjs.com/package/openclaw). Connect a personal Zalo bot to your OpenClaw agent with a QR-scan login — owner-bound, no webhook setup, no developer credentials.
 
-## Packages
-
-| Package | Description |
-|---------|-------------|
-| [`packages/plugin`](./packages/plugin) | `@zalo-platforms/openclaw-zaloclawbot` — Zalo channel plugin |
-| [`packages/cli`](./packages/cli) | `@zalo-platforms/openclaw-zaloclawbot-cli` — One-shot install CLI |
-
-## Development
-
-```sh
-npm install          # install all workspace dependencies
-npm run build        # build all packages
-npm run typecheck    # typecheck all TypeScript packages
-npm run test         # run all tests
-```
-
-## Quick Start (users)
+## Prerequisites
 
 - Node.js **>= 22**
 - OpenClaw CLI **>= 2026.4.10** installed:

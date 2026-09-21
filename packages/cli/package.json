@@ -1,0 +1,22 @@
+{
+  "name": "@zalo-platforms/openclaw-zaloclawbot-cli",
+  "version": "0.1.4",
+  "description": "Install CLI for @zalo-platforms/openclaw-zaloclawbot",
+  "license": "MIT",
+  "author": "Zalo Platforms",
+  "type": "module",
+  "files": [
+    "bin/",
+    "package.json",
+    "README.md"
+  ],
+  "bin": {
+    "openclaw-zaloclawbot-cli": "bin/install.mjs"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

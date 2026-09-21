@@ -5,6 +5,8 @@
     "moduleResolution": "NodeNext",
     "lib": ["ES2023"],
     "types": ["node"],
+    "outDir": "dist",
+    "rootDir": ".",
     "strict": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -12,8 +14,5 @@
     "declaration": false,
     "sourceMap": false
   },
-  "references": [
-    { "path": "packages/plugin" }
-  ],
-  "files": []
+  "include": ["index.ts", "src/**/*.ts"]
 }

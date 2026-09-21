@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 /**
- * One-shot install for @zalo-platforms/openclaw-zaloclawbot.
+ * One-shot install for @TanNhatCMS/openclaw-zaloclawbot.
  *
  * Runs the openclaw plugins install + enable + restart + login sequence.
  *
  * Usage:
- *   npx -y @zalo-platforms/openclaw-zaloclawbot-cli install
+ *   npx -y @TanNhatCMS/openclaw-zaloclawbot-cli install
  */
 
 import { spawn, spawnSync } from "node:child_process";
@@ -13,7 +13,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const PKG = "@zalo-platforms/openclaw-zaloclawbot";
+const PKG = "@TanNhatCMS/openclaw-zaloclawbot";
 const CHANNEL = "openclaw-zaloclawbot";
 
 function isExecutable(file) {

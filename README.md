@@ -1,13 +1,49 @@
 # openclaw-zaloclawbot
 
+[![CI](https://github.com/TanNhatCMS/openclaw-zaloclawbot/actions/workflows/ci.yml/badge.svg)](https://github.com/TanNhatCMS/openclaw-zaloclawbot/actions/workflows/ci.yml)
+[![Release](https://github.com/TanNhatCMS/openclaw-zaloclawbot/actions/workflows/release.yml/badge.svg)](https://github.com/TanNhatCMS/openclaw-zaloclawbot/actions/workflows/release.yml)
+
 Monorepo containing the Zalo ClawBot ecosystem for [OpenClaw](https://www.npmjs.com/package/openclaw).
 
 ## Packages
 
 | Package | Description |
 |---------|-------------|
-| [`packages/plugin`](./packages/plugin) | `@zalo-platforms/openclaw-zaloclawbot` — Zalo channel plugin |
-| [`packages/cli`](./packages/cli) | `@zalo-platforms/openclaw-zaloclawbot-cli` — One-shot install CLI |
+| [`packages/plugin`](./packages/plugin) | `@TanNhatCMS/openclaw-zaloclawbot` — Zalo channel plugin |
+| [`packages/cli`](./packages/cli) | `@TanNhatCMS/openclaw-zaloclawbot-cli` — One-shot install CLI |
+
+## Quick Start
+
+### Recommended: `openclaw onboard`
+
+```sh
+openclaw onboard
+```
+
+Pick **Zalo ClawBot** from the channel menu — installs, renders QR, finishes login.
+
+### One-shot installer
+
+```sh
+npx -y @TanNhatCMS/openclaw-zaloclawbot-cli install
+```
+
+Installs the plugin, enables it, restarts the gateway, and launches QR login.
+
+### Manual install
+
+```sh
+openclaw plugins install "@TanNhatCMS/openclaw-zaloclawbot@latest"
+openclaw config set plugins.entries.openclaw-zaloclawbot.enabled true
+openclaw gateway restart
+openclaw channels login --channel openclaw-zaloclawbot
+```
+
+## How it works
+
+- **Secure onboarding** — QR binds a freshly provisioned private bot to your Zalo User ID.
+- **Owner-bound** — the bot talks only to its owner; messages from others are dropped.
+- **Ban-safe** — uses official Bot Platform APIs, no unofficial web-spoof libraries.
 
 ## Development
 
@@ -18,57 +54,37 @@ npm run typecheck    # typecheck all TypeScript packages
 npm run test         # run all tests
 ```
 
-## Quick Start (users)
+## Releasing
 
-- Node.js **>= 22**
-- OpenClaw CLI **>= 2026.4.10** installed:
-  ```sh
-  npm install -g openclaw@latest
-  ```
-- A Zalo account on a mobile device (used to scan the login QR)
+Releases are automated via GitHub Actions. To publish a new version:
 
-## Install
+1. Update the version in all of these files:
+   - `packages/plugin/package.json` → `"version"`
+   - `packages/cli/package.json` → `"version"`
+   - `packages/plugin/openclaw.plugin.json` → `"version"`
+2. Commit and push:
+   ```sh
+   git add -A
+   git commit -m "release: vX.Y.Z"
+   git tag vX.Y.Z
+   git push origin main --tags
+   ```
+3. The [Release workflow](.github/workflows/release.yml) will automatically:
+   - Typecheck, build, and test
+   - Publish both packages to **GitHub Packages**
+   - Create a **GitHub Release** with tarball artifacts
 
-### Recommended: `openclaw onboard`
+### Installing from GitHub Packages
 
-Run the OpenClaw onboarding wizard and pick **Zalo ClawBot** from the channel menu:
-
-```sh
-openclaw onboard
-```
-
-The wizard installs the plugin from the official catalog (integrity-verified), renders the login QR right in the terminal, and finishes the channel once you scan it with Zalo — no extra commands.
-
-### One-shot installer
-
-If you just want to add the channel to an already-onboarded gateway:
-
-```sh
-npx -y @zalo-platforms/openclaw-zaloclawbot-cli install
-```
-
-This installs the plugin, enables it, restarts the gateway, and launches the QR login. See [`@zalo-platforms/openclaw-zaloclawbot-cli`](https://www.npmjs.com/package/@zalo-platforms/openclaw-zaloclawbot-cli) for options (e.g. `OPENCLAW_BIN`).
-
-### Manual install
+To install packages from this repository's GitHub Packages registry:
 
 ```sh
-# Use the exact pinned version so OpenClaw verifies the package against the
-# official catalog integrity hash during install.
-openclaw plugins install "@zalo-platforms/openclaw-zaloclawbot@0.1.4"
-openclaw config set plugins.entries.openclaw-zaloclawbot.enabled true
-openclaw channels login --channel openclaw-zaloclawbot
-openclaw gateway restart
+# Configure npm to use GitHub Packages for @TanNhatCMS scope
+npm config set @TanNhatCMS:registry https://npm.pkg.github.com
+
+# Then install normally
+npx -y @TanNhatCMS/openclaw-zaloclawbot-cli install
 ```
-
-Full instructions and troubleshooting: <https://docs.openclaw.ai/channels/zaloclawbot>
-
-## How it works
-
-Unlike the developer Zalo channel (which needs your own Official Account and static credentials), Zalo ClawBot is an **owner-bound personal assistant** on official Zalo Bot Platform infrastructure:
-
-- **Secure onboarding** — the QR binds a freshly provisioned private bot to your Zalo User ID.
-- **Owner-bound** — the bot talks only to its owner; messages from others are dropped at the platform level.
-- **Ban-safe** — it uses official Bot Platform APIs, with none of the suspension risk of unofficial web-spoof libraries.
 
 ## License
 

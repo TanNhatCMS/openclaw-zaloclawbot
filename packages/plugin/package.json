@@ -1,5 +1,5 @@
 {
-  "name": "@zalo-platforms/openclaw-zaloclawbot",
+  "name": "@TanNhatCMS/openclaw-zaloclawbot",
   "version": "0.1.4",
   "description": "Zalo channel for OpenClaw — QR-onboarded personal bot",
   "license": "MIT",
@@ -53,7 +53,7 @@
       "order": 81
     },
     "install": {
-      "npmSpec": "@zalo-platforms/openclaw-zaloclawbot",
+      "npmSpec": "@TanNhatCMS/openclaw-zaloclawbot",
       "defaultChoice": "npm",
       "minHostVersion": ">=2026.4.10"
     }

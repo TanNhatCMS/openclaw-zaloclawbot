@@ -1,0 +1,19 @@
+{
+  "id": "openclaw-zaloclawbot",
+  "version": "0.1.4",
+  "channels": ["openclaw-zaloclawbot"],
+  "channelConfigs": {
+    "openclaw-zaloclawbot": {
+      "label": "Zalo ClawBot",
+      "description": "Personal Zalo bot — QR-onboarded, owner-bound.",
+      "schema": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    }
+  },
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": true
+  }
+}

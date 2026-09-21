@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "openclaw": "2026.9.5",
-    "typescript": "^5.8.0",
+    "typescript": "^7.0.0",
     "@types/node": "^26.0.0",
     "@types/qrcode-terminal": "^0.12.2",
     "vitest": "^5.0.1"

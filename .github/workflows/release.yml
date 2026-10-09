@@ -20,10 +20,10 @@ jobs:
         with:
           node-version: 24
           registry-url: https://npm.pkg.github.com
-          scope: '@TanNhatCMS'
+          scope: '@tannhatcms'
 
       - name: Install dependencies
-        run: npm install --ignore-scripts
+        run: npm ci --ignore-scripts
 
       - name: Typecheck
         run: npm run typecheck

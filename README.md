@@ -9,8 +9,8 @@ Monorepo containing the Zalo ClawBot ecosystem for [OpenClaw](https://www.npmjs.
 
 | Package | Description |
 |---------|-------------|
-| [`packages/plugin`](./packages/plugin) | `@TanNhatCMS/openclaw-zaloclawbot` — Zalo channel plugin |
-| [`packages/cli`](./packages/cli) | `@TanNhatCMS/openclaw-zaloclawbot-cli` — One-shot install CLI |
+| [`packages/plugin`](./packages/plugin) | `@tannhatcms/openclaw-zaloclawbot` — Zalo channel plugin |
+| [`packages/cli`](./packages/cli) | `@tannhatcms/openclaw-zaloclawbot-cli` — One-shot install CLI |
 
 ## Quick Start
 
@@ -25,7 +25,7 @@ Pick **Zalo ClawBot** from the channel menu — installs, renders QR, finishes l
 ### One-shot installer
 
 ```sh
-npx -y @TanNhatCMS/openclaw-zaloclawbot-cli install
+npx -y @tannhatcms/openclaw-zaloclawbot-cli install
 ```
 
 Installs the plugin, enables it, restarts the gateway, and launches QR login.
@@ -33,7 +33,7 @@ Installs the plugin, enables it, restarts the gateway, and launches QR login.
 ### Manual install
 
 ```sh
-openclaw plugins install "@TanNhatCMS/openclaw-zaloclawbot@latest"
+openclaw plugins install "@tannhatcms/openclaw-zaloclawbot@latest"
 openclaw config set plugins.entries.openclaw-zaloclawbot.enabled true
 openclaw gateway restart
 openclaw channels login --channel openclaw-zaloclawbot
@@ -79,11 +79,11 @@ Releases are automated via GitHub Actions. To publish a new version:
 To install packages from this repository's GitHub Packages registry:
 
 ```sh
-# Configure npm to use GitHub Packages for @TanNhatCMS scope
-npm config set @TanNhatCMS:registry https://npm.pkg.github.com
+# Configure npm to use GitHub Packages for @tannhatcms scope
+npm config set @tannhatcms:registry https://npm.pkg.github.com
 
 # Then install normally
-npx -y @TanNhatCMS/openclaw-zaloclawbot-cli install
+npx -y @tannhatcms/openclaw-zaloclawbot-cli install
 ```
 
 ## License

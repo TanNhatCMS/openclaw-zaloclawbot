@@ -1,9 +1,2 @@
-node_modules/
-dist/
-*.tgz
-*.log
-
-# root-level files moved to packages/plugin
-/index.ts
-/openclaw.plugin.json
-/src/
+# probe
+node_modules

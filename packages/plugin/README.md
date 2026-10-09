@@ -38,7 +38,7 @@ This installs the plugin, enables it, restarts the gateway, and launches the QR 
 ```sh
 # Use the exact pinned version so OpenClaw verifies the package against the
 # official catalog integrity hash during install.
-openclaw plugins install "@tannhatcms/openclaw-zaloclawbot@2026.9.6"
+openclaw plugins install "@tannhatcms/openclaw-zaloclawbot@latest"
 openclaw config set plugins.entries.openclaw-zaloclawbot.enabled true
 openclaw channels login --channel openclaw-zaloclawbot
 openclaw gateway restart

@@ -56,8 +56,16 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release create "${{ github.ref_name }}" \
-            --title "${{ github.ref_name }}" \
-            --generate-notes \
-            packages/plugin/*.tgz \
-            packages/cli/*.tgz
+          tag="${{ github.ref_name }}"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release upload "$tag" \
+              packages/plugin/*.tgz \
+              packages/cli/*.tgz \
+              --clobber
+          else
+            gh release create "$tag" \
+              --title "$tag" \
+              --generate-notes \
+              packages/plugin/*.tgz \
+              packages/cli/*.tgz
+          fi

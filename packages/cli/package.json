@@ -2,6 +2,10 @@
   "name": "@TanNhatCMS/openclaw-zaloclawbot-cli",
   "version": "2026.9.5",
   "description": "Install CLI for @zalo-platforms/openclaw-zaloclawbot",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TanNhatCMS/openclaw-zaloclawbot.git"
+  },
   "license": "MIT",
   "author": "Zalo Platforms",
   "type": "module",

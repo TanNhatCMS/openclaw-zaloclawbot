@@ -1,5 +1,5 @@
 {
-  "name": "@TanNhatCMS/openclaw-zaloclawbot-cli",
+  "name": "@tannhatcms/openclaw-zaloclawbot-cli",
   "version": "2026.9.5",
   "description": "Install CLI for @zalo-platforms/openclaw-zaloclawbot",
   "repository": {

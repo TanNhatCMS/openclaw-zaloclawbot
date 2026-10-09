@@ -1,7 +1,7 @@
 {
   "name": "@tannhatcms/openclaw-zaloclawbot-cli",
-  "version": "2026.9.5",
-  "description": "Install CLI for @zalo-platforms/openclaw-zaloclawbot",
+  "version": "2026.9.6",
+  "description": "Install CLI for @tannhatcms/openclaw-zaloclawbot",
   "repository": {
     "type": "git",
     "url": "https://github.com/TanNhatCMS/openclaw-zaloclawbot.git"

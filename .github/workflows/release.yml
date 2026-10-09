@@ -20,6 +20,7 @@ jobs:
         with:
           node-version: 24
           registry-url: https://npm.pkg.github.com
+          scope: '@TanNhatCMS'
 
       - name: Install dependencies
         run: npm install --ignore-scripts

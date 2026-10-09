@@ -1,4 +1,4 @@
-# @zalo-platforms/openclaw-zaloclawbot
+# @tannhatcms/openclaw-zaloclawbot
 
 Official Zalo channel plugin for [OpenClaw](https://www.npmjs.com/package/openclaw). Connect a personal Zalo bot to your OpenClaw agent with a QR-scan login — owner-bound, no webhook setup, no developer credentials.
 
@@ -28,17 +28,17 @@ The wizard installs the plugin from the official catalog (integrity-verified), r
 If you just want to add the channel to an already-onboarded gateway:
 
 ```sh
-npx -y @zalo-platforms/openclaw-zaloclawbot-cli install
+npx -y @tannhatcms/openclaw-zaloclawbot-cli install
 ```
 
-This installs the plugin, enables it, restarts the gateway, and launches the QR login. See [`@zalo-platforms/openclaw-zaloclawbot-cli`](https://www.npmjs.com/package/@zalo-platforms/openclaw-zaloclawbot-cli) for options (e.g. `OPENCLAW_BIN`).
+This installs the plugin, enables it, restarts the gateway, and launches the QR login. See [`@tannhatcms/openclaw-zaloclawbot-cli`](https://github.com/TanNhatCMS/openclaw-zaloclawbot/tree/main/packages/cli) for options (e.g. `OPENCLAW_BIN`).
 
 ### Manual install
 
 ```sh
 # Use the exact pinned version so OpenClaw verifies the package against the
 # official catalog integrity hash during install.
-openclaw plugins install "@zalo-platforms/openclaw-zaloclawbot@0.1.4"
+openclaw plugins install "@tannhatcms/openclaw-zaloclawbot@2026.9.6"
 openclaw config set plugins.entries.openclaw-zaloclawbot.enabled true
 openclaw channels login --channel openclaw-zaloclawbot
 openclaw gateway restart

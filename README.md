@@ -56,7 +56,7 @@ npm run test         # run all tests
 
 ## Releasing
 
-Releases are automated via GitHub Actions. To publish a new version:
+Releases are automated via GitHub Actions. Package versions use the OpenClaw calendar format; GitHub release tags use the repository's `v0.0.x` release sequence. To publish a new version:
 
 1. Update the version in all of these files:
    - `packages/plugin/package.json` → `"version"`
@@ -65,14 +65,16 @@ Releases are automated via GitHub Actions. To publish a new version:
 2. Commit and push:
    ```sh
    git add -A
-   git commit -m "release: vX.Y.Z"
-   git tag vX.Y.Z
+   git commit -m "release: 2026.9.6"
+   git tag v0.0.4
    git push origin main --tags
    ```
 3. The [Release workflow](.github/workflows/release.yml) will automatically:
    - Typecheck, build, and test
    - Publish both packages to **GitHub Packages**
-   - Create a **GitHub Release** with tarball artifacts
+   - Create or update a **GitHub Release** with tarball artifacts
+
+The tag must be unique. If a tag has already been used, choose the next repository release tag instead of moving or overwriting the existing tag.
 
 ### Installing from GitHub Packages
 

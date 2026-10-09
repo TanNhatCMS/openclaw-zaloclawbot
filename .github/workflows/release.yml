@@ -7,7 +7,7 @@ on:
 
 permissions:
   contents: write
-  packages: write
+  id-token: write
 
 jobs:
   release:
@@ -19,8 +19,7 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: 24
-          registry-url: https://npm.pkg.github.com
-          scope: '@tannhatcms'
+          registry-url: https://registry.npmjs.org
 
       - name: Install dependencies
         run: npm install --ignore-scripts
@@ -36,15 +35,15 @@ jobs:
 
       - name: Publish plugin
         working-directory: packages/plugin
-        run: npm publish
+        run: npm publish --access public --provenance
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish CLI
         working-directory: packages/cli
-        run: npm publish
+        run: npm publish --access public --provenance
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Package tarballs
         working-directory: packages

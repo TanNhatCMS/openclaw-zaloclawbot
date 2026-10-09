@@ -65,26 +65,23 @@ Releases are automated via GitHub Actions. Package versions use the OpenClaw cal
 2. Commit and push:
    ```sh
    git add -A
-   git commit -m "release: 2026.9.6"
-   git tag v0.0.4
+   git commit -m "release: 2026.9.7"
+   git tag v0.0.5
    git push origin main --tags
    ```
 3. The [Release workflow](.github/workflows/release.yml) will automatically:
    - Typecheck, build, and test
-   - Publish both packages to **GitHub Packages**
+   - Publish both packages to **npmjs.org**
    - Create or update a **GitHub Release** with tarball artifacts
 
 The tag must be unique. If a tag has already been used, choose the next repository release tag instead of moving or overwriting the existing tag.
 
-### Installing from GitHub Packages
+### Installing from npmjs.org
 
-To install packages from this repository's GitHub Packages registry:
+The release workflow publishes the packages to the public npm registry. Configure the `NPM_TOKEN` repository secret with a Granular Access Token that has publish access to both packages.
 
 ```sh
-# Configure npm to use GitHub Packages for @tannhatcms scope
-npm config set @tannhatcms:registry https://npm.pkg.github.com
-
-# Then install normally
+# Install the CLI from npmjs.org
 npx -y @tannhatcms/openclaw-zaloclawbot-cli install
 ```
 

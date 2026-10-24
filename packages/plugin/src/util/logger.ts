@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { resolvePreferredOpenClawTmpDir } from "openclaw/plugin-sdk/infra-runtime";
+import { resolvePreferredOpenClawTmpDir } from "openclaw/plugin-sdk/temp-path";
 
 const MAIN_LOG_DIR = resolvePreferredOpenClawTmpDir();
 const SUBSYSTEM = "gateway/channels/openclaw-zaloclawbot";

@@ -154,23 +154,29 @@ export async function runClawbotQrLoginLoop(params: {
  */
 export async function triggerClawbotChannelReload(): Promise<void> {
   try {
-    const { loadConfig, writeConfigFile } = await import(
-      "openclaw/plugin-sdk/config-runtime"
+    // openclaw/plugin-sdk/config-runtime was removed in core 2026.10.6
+    // (loadConfig/writeConfigFile are gone with it). config-mutation's
+    // updateConfig is the supported replacement: it reads the source-form
+    // config, applies the mutator, and writes back only the source form —
+    // which is exactly what this reload marker needs, and it avoids writing
+    // a resolved config back over the source file.
+    const { updateConfig } = await import(
+      "openclaw/plugin-sdk/config-mutation"
     );
-    const cfg = loadConfig();
-    const channels = (cfg.channels ?? {}) as Record<string, any>;
-    const existing = channels[CHANNEL_ID] ?? {};
-    const updated = {
-      ...cfg,
-      channels: {
-        ...channels,
-        [CHANNEL_ID]: {
-          ...existing,
-          channelConfigUpdatedAt: new Date().toISOString(),
+    await updateConfig((cfg) => {
+      const channels = (cfg.channels ?? {}) as Record<string, unknown>;
+      const existing = (channels[CHANNEL_ID] ?? {}) as Record<string, unknown>;
+      return {
+        ...cfg,
+        channels: {
+          ...channels,
+          [CHANNEL_ID]: {
+            ...existing,
+            channelConfigUpdatedAt: new Date().toISOString(),
+          },
         },
-      },
-    };
-    await writeConfigFile(updated);
+      };
+    });
     logger.info("triggerClawbotChannelReload: bumped channelConfigUpdatedAt");
   } catch (err) {
     logger.warn(`triggerClawbotChannelReload: failed: ${String(err)}`);

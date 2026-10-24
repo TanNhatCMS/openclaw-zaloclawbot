@@ -65,8 +65,8 @@ Releases are automated via GitHub Actions. Package versions use the OpenClaw cal
 2. Commit and push:
    ```sh
    git add -A
-   git commit -m "release: 2026.9.9"
-   git tag v2026.9.9
+   git commit -m "release: 2026.10.6"
+   git tag v2026.10.6
    git push origin main --tags
    ```
 3. The [Release workflow](.github/workflows/release.yml) will automatically:

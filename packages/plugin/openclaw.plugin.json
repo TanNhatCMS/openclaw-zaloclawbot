@@ -1,5 +1,6 @@
 {
   "id": "openclaw-zaloclawbot",
+  "name": "Zalo ClawBot",
   "version": "2026.11.2",
   "channels": ["openclaw-zaloclawbot"],
   "channelConfigs": {

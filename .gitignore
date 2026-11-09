@@ -2,6 +2,7 @@ node_modules/
 dist/
 *.tgz
 *.log
+packages/plugin/reports/
 
 # root-level files moved to packages/plugin
 /index.ts

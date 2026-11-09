@@ -24,6 +24,8 @@
     "typecheck": "tsc --noEmit",
     "build": "tsc",
     "test": "vitest run",
+    "inspect": "plugin-inspector check --openclaw-version 2026.11.2",
+    "inspect:report": "plugin-inspector inspect --openclaw-version 2026.11.2",
     "clean": "rm -rf dist",
     "prepublishOnly": "rm -rf dist && tsc"
   },
@@ -34,16 +36,20 @@
     "qrcode-terminal": "0.12.0"
   },
   "devDependencies": {
-    "openclaw": "2026.11.2",
-    "typescript": "^7.0.0",
+    "@openclaw/plugin-inspector": "^0.4.6",
     "@types/node": "^26.0.0",
     "@types/qrcode-terminal": "^0.12.2",
+    "openclaw": "2026.11.2",
+    "typescript": "^7.0.0",
     "vitest": "^5.0.5"
   },
   "openclaw": {
     "extensions": [
       "./index.ts"
     ],
+    "compat": {
+      "pluginApi": ">=2026.4.10"
+    },
     "runtimeExtensions": [
       "./dist/index.js"
     ],

@@ -27,6 +27,10 @@ This runs the full sequence against your existing OpenClaw install:
 
 If the gateway restart fails, rerun `openclaw gateway restart` once the plugin is installed.
 
+## Webhook mode (optional)
+
+After install, the channel long-polls by default. For production receiving via webhook instead, set a public HTTPS base URL in the channel config — see [`@tannhatcms/openclaw-zaloclawbot`](../plugin#receiving-messages-polling-vs-webhook) for setup, requirements, and limits.
+
 ## Requirements
 
 - Node.js **>= 22**

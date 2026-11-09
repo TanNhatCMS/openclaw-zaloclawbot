@@ -11,6 +11,8 @@ vi.mock("../util/logger.js", () => ({
 vi.mock("./accounts.js", () => ({
   saveClawbotAccount: vi.fn(),
   registerClawbotAccountId: vi.fn(),
+  loadClawbotAccount: vi.fn().mockReturnValue(null),
+  ensureClawbotWebhookSecret: vi.fn().mockReturnValue("mocked-webhook-secret"),
 }));
 
 vi.mock("./login-account.js", () => ({
@@ -45,6 +47,10 @@ describe("persistClawbotLogin", () => {
     });
     expect(result.accountId).toBe("clawbot-test");
     expect(saveClawbotAccount).toHaveBeenCalled();
+    expect(saveClawbotAccount).toHaveBeenCalledWith(
+      "clawbot-test",
+      expect.objectContaining({ webhookSecret: "mocked-webhook-secret" }),
+    );
     expect(registerClawbotAccountId).toHaveBeenCalled();
   });
 

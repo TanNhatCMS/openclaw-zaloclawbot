@@ -1,3 +1,4 @@
+import { randomBytes } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { normalizeAccountId } from "openclaw/plugin-sdk/account-id";
@@ -124,6 +125,36 @@ export function clearClawbotAccount(accountId: string): void {
   } catch {
     // ignore
   }
+}
+
+/**
+ * Return the stored webhook secret for an account, provisioning one on first
+ * use. The secret is what Zalo sends back in the `X-Bot-Api-Secret-Token`
+ * header (docs: webhook) and what `setWebhook` registers as `secret_token`
+ * (8–256 chars required). It is generated locally, stored 0600 next to the
+ * bot token, and never sent anywhere except to Zalo. Throws when the account
+ * has no stored bot id to attach the secret to — re-login provisions it.
+ */
+export function ensureClawbotWebhookSecret(
+  account: { accountId: string; botId?: string; botToken?: string; webhookSecret?: string },
+  botToken?: string,
+): string {
+  const existing =
+    account.webhookSecret?.trim() || loadClawbotAccount(account.accountId)?.webhookSecret?.trim();
+  if (existing) return existing;
+
+  const stored = loadClawbotAccount(account.accountId);
+  const botId = stored?.botId ?? account.botId;
+  const token = botToken ?? account.botToken ?? stored?.botToken;
+  if (!botId || !token) {
+    throw new Error(
+      `clawbot webhook: no webhook secret stored for account ${account.accountId} — re-login to provision one (openclaw channels login --channel openclaw-zaloclawbot)`,
+    );
+  }
+  const fresh = randomBytes(32).toString("hex");
+  saveClawbotAccount(account.accountId, { botId, botToken: token, webhookSecret: fresh });
+  logger.info(`ensureClawbotWebhookSecret: provisioned webhook secret accountId=${account.accountId}`);
+  return fresh;
 }
 
 export function listClawbotAccountIds(_cfg: OpenClawConfig): string[] {

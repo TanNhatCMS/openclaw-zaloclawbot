@@ -22,6 +22,13 @@ export async function processOneClawbotMessage(
   deps: ProcessMessageDeps,
 ): Promise<void> {
   const aLog = logger.withAccount(deps.accountId);
+  // `message.unsupported.received` means Zalo deliberately withheld the
+  // content (sender in a protected category, docs: webhook). There is no
+  // text to route, so drop it explicitly instead of silently.
+  if (update.event_name === "message.unsupported.received") {
+    aLog.info("processOneClawbotMessage: unsupported sender content withheld by Zalo; dropped");
+    return;
+  }
   const ctx = zaloUpdateToMsgContext(update, deps.accountId);
 
   if (!ctx) {

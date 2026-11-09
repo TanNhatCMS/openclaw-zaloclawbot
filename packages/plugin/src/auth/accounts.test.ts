@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { listIndexedClawbotAccountIds, registerClawbotAccountId, unregisterClawbotAccountId, saveClawbotAccount, loadClawbotAccount, clearClawbotAccount, resolveClawbotAccount } from "./accounts.js";
+import { listIndexedClawbotAccountIds, registerClawbotAccountId, unregisterClawbotAccountId, saveClawbotAccount, loadClawbotAccount, clearClawbotAccount, resolveClawbotAccount, ensureClawbotWebhookSecret } from "./accounts.js";
 
 let tmpDir: string;
 
@@ -76,5 +76,27 @@ describe("account CRUD", () => {
     expect(result.accountId).toBe("acct-merge");
     expect(result.botToken).toBe("tok-merge");
     expect(result.configured).toBe(true);
+  });
+});
+
+describe("ensureClawbotWebhookSecret", () => {
+  it("provisions a 64-hex-char secret and persists it", () => {
+    saveClawbotAccount("acct-hook", { botId: "bot-hook", botToken: "tok-hook" });
+    const secret = ensureClawbotWebhookSecret({ accountId: "acct-hook", botId: "bot-hook", botToken: "tok-hook" });
+    expect(secret).toMatch(/^[0-9a-f]{64}$/);
+    expect(loadClawbotAccount("acct-hook")!.webhookSecret).toBe(secret);
+  });
+
+  it("returns the stored secret on repeat calls (no rotation)", () => {
+    saveClawbotAccount("acct-hook2", { botId: "b", botToken: "t" });
+    const first = ensureClawbotWebhookSecret({ accountId: "acct-hook2", botId: "b", botToken: "t" });
+    const second = ensureClawbotWebhookSecret({ accountId: "acct-hook2", botId: "b", botToken: "t" });
+    expect(second).toBe(first);
+  });
+
+  it("throws when the account has no stored bot id", () => {
+    expect(() =>
+      ensureClawbotWebhookSecret({ accountId: "acct-missing" }),
+    ).toThrow("re-login");
   });
 });

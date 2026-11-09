@@ -57,6 +57,29 @@ describe("zaloUpdateToMsgContext", () => {
     expect(result!.SenderName).toBe("Test User");
   });
 
+  it("uses a photo caption as Body (message.image.received)", () => {
+    const update = makeUpdate({
+      event_name: "message.image.received",
+      text: undefined,
+      caption: "Ảnh sản phẩm",
+      message_type: "CHAT_PHOTO",
+      photo_url: "https://example.com/photo.jpg",
+    } as any);
+    const result = zaloUpdateToMsgContext(update, "acct-1");
+    expect(result).not.toBeNull();
+    expect(result!.Body).toBe("Ảnh sản phẩm");
+  });
+
+  it("returns null when a photo has no caption", () => {
+    const update = makeUpdate({
+      event_name: "message.image.received",
+      text: undefined,
+      caption: undefined,
+      message_type: "CHAT_PHOTO",
+    } as any);
+    expect(zaloUpdateToMsgContext(update, "acct-1")).toBeNull();
+  });
+
   it("generates unique MessageSid", () => {
     const a = zaloUpdateToMsgContext(makeUpdate(), "acct-1");
     const b = zaloUpdateToMsgContext(makeUpdate(), "acct-1");

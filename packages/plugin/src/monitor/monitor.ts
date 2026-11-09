@@ -4,12 +4,18 @@ import {
   deleteWebhook,
   getUpdates,
   getWebhookInfo,
+  setWebhook,
 } from "../api/api.js";
 import { resolveClawbotChannelRuntime } from "../runtime.js";
 import { logger, redactToken } from "../util/logger.js";
 import type { ResolvedClawbotAccount } from "../auth/accounts.js";
+import { ensureClawbotWebhookSecret } from "../auth/accounts.js";
 import { MessageIdDedupe } from "./dedupe.js";
 import { processOneClawbotMessage } from "./process-message.js";
+import {
+  registerClawbotWebhookTarget,
+  resolveClawbotWebhookUrl,
+} from "../webhook/webhook.js";
 
 const DEFAULT_LONG_POLL_SECONDS = 30;
 const ERROR_BACKOFF_MS = 5_000;
@@ -43,10 +49,6 @@ export async function startClawbotProvider(opts: StartClawbotProviderOpts): Prom
   }
 
   const token = account.botToken;
-  aLog.info(`startClawbotProvider: polling mode token=${redactToken(token)}`);
-  log(`[${account.accountId}] zaloclawbot starting in polling mode`);
-
-  await clearStaleWebhook(token, account.accountId, log);
 
   const pluginRuntime = await resolveClawbotChannelRuntime({ channelRuntime });
   const dedupe = new MessageIdDedupe(200);
@@ -82,6 +84,41 @@ export async function startClawbotProvider(opts: StartClawbotProviderOpts): Prom
         errLog(`[${account.accountId}] process update failed: ${String(err)}`);
       });
   };
+
+  const enqueueDedupedUpdate = (update: Parameters<typeof processOneClawbotMessage>[0]) => {
+    const messageId = update.message?.message_id;
+    if (messageId !== undefined && messageId !== null && dedupe.seen(messageId)) {
+      aLog.debug(`dropped duplicate message_id=${messageId}`);
+      return;
+    }
+    enqueueUpdate(update);
+  };
+
+  // Webhook mode (docs: webhook, setWebhook): when the operator configured a
+  // public HTTPS base URL, Zalo POSTs events to the gateway instead of the
+  // gateway long-polling. The two modes are mutually exclusive — polling
+  // does not work while a webhook is configured.
+  const webhookBaseUrl = account.webhookBaseUrl?.trim();
+  if (webhookBaseUrl) {
+    await startWebhookMode({
+      account,
+      token,
+      webhookBaseUrl,
+      abortSignal,
+      log,
+      errLog,
+      setStatus,
+      enqueueUpdate: enqueueDedupedUpdate,
+    });
+    aLog.info("webhook mode ended (aborted)");
+    setStatus?.({ accountId: account.accountId, running: false });
+    return;
+  }
+
+  aLog.info(`startClawbotProvider: polling mode token=${redactToken(token)}`);
+  log(`[${account.accountId}] zaloclawbot starting in polling mode`);
+
+  await clearStaleWebhook(token, account.accountId, log);
 
   while (!abortSignal.aborted) {
     try {
@@ -132,6 +169,69 @@ export async function startClawbotProvider(opts: StartClawbotProviderOpts): Prom
 
   aLog.info("polling loop ended (aborted)");
   setStatus?.({ accountId: account.accountId, running: false });
+}
+
+async function startWebhookMode(params: {
+  account: ResolvedClawbotAccount;
+  token: string;
+  webhookBaseUrl: string;
+  abortSignal: AbortSignal;
+  log: (message: string) => void;
+  errLog: (message: string) => void;
+  setStatus?: (patch: ClawbotStatusPatch) => void;
+  enqueueUpdate: (update: Parameters<typeof processOneClawbotMessage>[0]) => void;
+}): Promise<void> {
+  const { account, token, webhookBaseUrl, abortSignal, log, errLog, setStatus, enqueueUpdate } =
+    params;
+  const aLog = logger.withAccount(account.accountId);
+
+  // The secret is provisioned at login; older accounts get one generated and
+  // persisted on first webhook-mode start (never sent anywhere except to
+  // Zalo as the setWebhook secret_token).
+  const secret = ensureClawbotWebhookSecret(account, token);
+  const { url, path } = resolveClawbotWebhookUrl(webhookBaseUrl, account.accountId);
+
+  aLog.info(`startClawbotProvider: webhook mode url=${url}`);
+  log(`[${account.accountId}] zaloclawbot starting in webhook mode url=${url}`);
+
+  const unregister = registerClawbotWebhookTarget({
+    path,
+    accountId: account.accountId,
+    secret,
+    processUpdate: async (update) => {
+      setStatus?.({ accountId: account.accountId, lastEventAt: Date.now() });
+      enqueueUpdate(update);
+    },
+  });
+
+  try {
+    const res = await setWebhook(token, { url, secret_token: secret });
+    const verification = res.result?.verification;
+    if (verification) {
+      if (verification.ok) {
+        aLog.info(`webhook registered: verification ok outcome=${verification.outcome ?? "?"}`);
+        log(`[${account.accountId}] webhook verified: ${verification.outcome ?? "ok"}`);
+      } else {
+        // The URL stays registered server-side even when verification fails
+        // (docs: setWebhook), so keep running — but say so loudly, and
+        // re-check with testWebhook after fixing the endpoint.
+        aLog.error(
+          `webhook verification failed outcome=${verification.outcome ?? "?"} hint=${verification.hint ?? ""}`,
+        );
+        errLog(
+          `[${account.accountId}] webhook verification failed (${verification.outcome ?? "?"}): ${verification.hint ?? "check that the public URL reaches this gateway, then re-check with testWebhook"}`,
+        );
+        setStatus?.({ accountId: account.accountId, lastError: verification.hint ?? verification.outcome ?? "webhook verification failed" });
+      }
+    }
+
+    if (abortSignal.aborted) return;
+    await new Promise<void>((resolve) => {
+      abortSignal.addEventListener("abort", () => resolve(), { once: true });
+    });
+  } finally {
+    unregister();
+  }
 }
 
 async function clearStaleWebhook(

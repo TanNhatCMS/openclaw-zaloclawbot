@@ -1,6 +1,11 @@
 import { getMe } from "../api/api.js";
 import { logger } from "../util/logger.js";
-import { registerClawbotAccountId, saveClawbotAccount } from "./accounts.js";
+import {
+  ensureClawbotWebhookSecret,
+  loadClawbotAccount,
+  registerClawbotAccountId,
+  saveClawbotAccount,
+} from "./accounts.js";
 import { resolveLoginAccountIdentity } from "./login-account.js";
 import { requestLogin, waitForLogin } from "./login-qr.js";
 
@@ -74,12 +79,26 @@ export async function persistClawbotLogin(wait: {
     );
   }
 
+  // Provision the webhook secret now (preserving an existing one) so webhook
+  // mode works without a second step when the operator later sets a public
+  // webhookBaseUrl. The secret is only ever sent to Zalo.
+  const webhookSecret = ensureClawbotWebhookSecret(
+    {
+      accountId: identity.accountId,
+      botId: identity.storageBotId,
+      botToken: wait.botToken,
+      webhookSecret: loadClawbotAccount(identity.accountId)?.webhookSecret,
+    },
+    wait.botToken,
+  );
+
   saveClawbotAccount(identity.accountId, {
     botId: identity.storageBotId,
     botToken: wait.botToken,
     accountName: identity.accountName,
     ownerId: wait.ownerId,
     oaId: wait.oaId,
+    webhookSecret,
   });
   registerClawbotAccountId(identity.accountId);
 

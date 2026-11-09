@@ -1,5 +1,14 @@
 import { describe, it, expect, vi } from "vitest";
-import { ZaloApiError, callZaloApi, getUpdates } from "./api.js";
+import {
+  ZaloApiError,
+  callZaloApi,
+  getUpdates,
+  sendMessage,
+  sendVoice,
+  setWebhook,
+  testWebhook,
+  validateWebhookParams,
+} from "./api.js";
 
 describe("ZaloApiError", () => {
   it("has correct name and properties", () => {
@@ -78,5 +87,144 @@ describe("getUpdates", () => {
     const result = await getUpdates("token", { timeout: 1 }, mockFetch);
     expect(result.ok).toBe(true);
     expect(result.result).toEqual(update);
+  });
+});
+
+describe("sendMessage", () => {
+  const okFetch = () =>
+    vi.fn().mockResolvedValue({
+      json: async () => ({ ok: true, result: { message_id: "82599fa32f56d00e8941", date: 1 } }),
+    });
+
+  it("sends parse_mode and text_styles", async () => {
+    const mockFetch = okFetch();
+    await sendMessage(
+      "token",
+      {
+        chat_id: "abc.xyz",
+        text: "Xin chào bạn",
+        text_styles: [{ start: 0, len: 7, st: ["b", "c_db342e"] }],
+      },
+      mockFetch as any,
+    );
+    const [, opts] = mockFetch.mock.calls[0];
+    expect(JSON.parse(opts.body)).toEqual({
+      chat_id: "abc.xyz",
+      text: "Xin chào bạn",
+      text_styles: [{ start: 0, len: 7, st: ["b", "c_db342e"] }],
+    });
+  });
+
+  it("rejects empty text (docs: 1–2000 chars)", async () => {
+    await expect(
+      sendMessage("token", { chat_id: "a", text: "" }, okFetch() as any),
+    ).rejects.toThrow("1–2000");
+  });
+
+  it("rejects text over 2000 chars", async () => {
+    await expect(
+      sendMessage("token", { chat_id: "a", text: "x".repeat(2001) }, okFetch() as any),
+    ).rejects.toThrow("1–2000");
+  });
+});
+
+describe("sendVoice", () => {
+  const okFetch = () =>
+    vi.fn().mockResolvedValue({
+      json: async () => ({ ok: true, result: { message_id: "82599fa32f56d00e8941", date: 1 } }),
+    });
+
+  it("posts chat_id and voice_url", async () => {
+    const mockFetch = okFetch();
+    const result = await sendVoice(
+      "token",
+      { chat_id: "abc.xyz", voice_url: "https://example.com/voice.aac" },
+      mockFetch as any,
+    );
+    const [url, opts] = mockFetch.mock.calls[0];
+    expect(url).toContain("/bottoken/sendVoice");
+    expect(JSON.parse(opts.body)).toEqual({
+      chat_id: "abc.xyz",
+      voice_url: "https://example.com/voice.aac",
+    });
+    expect(result.result?.message_id).toBe("82599fa32f56d00e8941");
+  });
+
+  it("rejects non-.aac voice_url", async () => {
+    await expect(
+      sendVoice(
+        "token",
+        { chat_id: "a", voice_url: "https://example.com/voice.mp3" },
+        okFetch() as any,
+      ),
+    ).rejects.toThrow(".aac");
+  });
+
+  it("rejects missing chat_id", async () => {
+    await expect(
+      sendVoice("token", { chat_id: "  ", voice_url: "https://example.com/v.aac" }, okFetch() as any),
+    ).rejects.toThrow("chat_id is required");
+  });
+});
+
+describe("validateWebhookParams / setWebhook", () => {
+  const good = { url: "https://example.com/openclaw-zaloclawbot/acct-1", secret_token: "s3cret-token-long-enough" };
+
+  it("accepts a public HTTPS url with a valid secret", () => {
+    expect(() => validateWebhookParams(good)).not.toThrow();
+  });
+
+  it("rejects http urls", () => {
+    expect(() => validateWebhookParams({ ...good, url: "http://example.com/hook" })).toThrow("HTTPS");
+  });
+
+  it("rejects localhost and private IPs", () => {
+    for (const url of [
+      "https://localhost/hook",
+      "https://127.0.0.1/hook",
+      "https://192.168.1.10/hook",
+      "https://10.0.0.5/hook",
+      "https://172.17.0.1/hook",
+    ]) {
+      expect(() => validateWebhookParams({ ...good, url })).toThrow("publicly reachable");
+    }
+  });
+
+  it("rejects secrets shorter than 8 chars", () => {
+    expect(() => validateWebhookParams({ ...good, secret_token: "short" })).toThrow("8–256");
+  });
+
+  it("setWebhook posts url + secret_token and returns verification", async () => {
+    const mockFetch = vi.fn().mockResolvedValue({
+      json: async () => ({
+        ok: true,
+        result: {
+          url: good.url,
+          updated_at: 1749538250568,
+          verification: { ok: true, url: good.url, outcome: "webhook.ok", hint: "ok" },
+        },
+      }),
+    });
+    const result = await setWebhook("token", good, mockFetch as any);
+    const [url, opts] = mockFetch.mock.calls[0];
+    expect(url).toContain("/bottoken/setWebhook");
+    expect(JSON.parse(opts.body)).toEqual(good);
+    expect(result.result?.verification?.outcome).toBe("webhook.ok");
+  });
+});
+
+describe("testWebhook", () => {
+  it("posts with no body and returns the verification result", async () => {
+    const mockFetch = vi.fn().mockResolvedValue({
+      json: async () => ({
+        ok: true,
+        result: { ok: false, url: "https://example.com/hook", outcome: "webhook.http.403", hint: "WAF" },
+      }),
+    });
+    const result = await testWebhook("token", mockFetch as any);
+    const [url, opts] = mockFetch.mock.calls[0];
+    expect(url).toContain("/bottoken/testWebhook");
+    expect(opts.body).toBeUndefined();
+    expect(result.result?.outcome).toBe("webhook.http.403");
   });
 });

@@ -80,4 +80,14 @@ describe("processOneClawbotMessage", () => {
     await processOneClawbotMessage({ event_name: "callback" }, deps);
     expect(deps.channelRuntime.routing.resolveAgentRoute).not.toHaveBeenCalled();
   });
+
+  it("drops message.unsupported.received without routing (content withheld by Zalo)", async () => {
+    const deps = makeDeps();
+    await processOneClawbotMessage(
+      { event_name: "message.unsupported.received", message: { message_id: "u1" } },
+      deps,
+    );
+    expect(zaloUpdateToMsgContext).not.toHaveBeenCalled();
+    expect(deps.channelRuntime.routing.resolveAgentRoute).not.toHaveBeenCalled();
+  });
 });

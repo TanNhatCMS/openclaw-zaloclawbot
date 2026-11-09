@@ -6,7 +6,10 @@ function generateMessageSid(): string {
 }
 
 function extractText(message: ZaloMessage): string {
-  return message.text?.trim() ?? "";
+  // Text messages carry `text`; photo messages (`message.image.received`)
+  // carry a `caption` instead — treat it as the message body so a captioned
+  // photo still reaches the agent. Anything else has no usable text.
+  return message.text?.trim() || message.caption?.trim() || "";
 }
 
 export interface ZaloInboundContext {

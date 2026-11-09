@@ -44,8 +44,11 @@ openclaw channels login --channel openclaw-zaloclawbot
 - **Secure onboarding** — QR binds a freshly provisioned private bot to your Zalo User ID.
 - **Owner-bound** — the bot talks only to its owner; messages from others are dropped.
 - **Ban-safe** — uses official Bot Platform APIs, no unofficial web-spoof libraries.
+- **Two ways to receive** — long-polling (`getUpdates`) by default; optional webhook mode when `channels.openclaw-zaloclawbot.webhookBaseUrl` is a public HTTPS URL (see [`packages/plugin`](./packages/plugin#receiving-messages-polling-vs-webhook)).
 
 ## Development
+
+Current target: OpenClaw **2026.11.2**.
 
 ```sh
 npm install          # install all workspace dependencies
@@ -65,8 +68,8 @@ Releases are automated via GitHub Actions. Package versions use the OpenClaw cal
 2. Commit and push:
    ```sh
    git add -A
-   git commit -m "release: 2026.10.6"
-   git tag v2026.10.6
+   git commit -m "release: 2026.11.2"
+   git tag v2026.11.2
    git push origin main --tags
    ```
 3. The [Release workflow](.github/workflows/release.yml) will automatically:

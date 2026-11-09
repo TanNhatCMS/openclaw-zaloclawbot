@@ -84,6 +84,11 @@ export const clawbotPlugin: ChannelPlugin<ResolvedClawbotAccount> = {
           description:
             "Max characters per outgoing message (hard-capped at the platform's 2000-char limit; default 1990). Lower values chunk more aggressively; set to 2000 to keep a reply in one message whenever the platform allows.",
         },
+        webhookBaseUrl: {
+          type: "string",
+          description:
+            "Public HTTPS base URL of this gateway (e.g. https://example.com). When set, the channel runs in webhook mode: Zalo POSTs events to <base>/openclaw-zaloclawbot/<accountId> and the gateway registers it via setWebhook. When unset, the channel long-polls with getUpdates (local/dev). The URL must be publicly reachable — localhost/private IPs are rejected by Zalo. The webhook secret is provisioned automatically at login.",
+        },
       },
     },
   },

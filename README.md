@@ -55,6 +55,7 @@ npm install          # install all workspace dependencies
 npm run build        # build all packages
 npm run typecheck    # typecheck all TypeScript packages
 npm run test         # run all tests
+npm run inspect      # plugin-inspector compatibility check (see packages/plugin#compatibility-check-plugin-inspector)
 ```
 
 ## Releasing

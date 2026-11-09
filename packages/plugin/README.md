@@ -110,6 +110,52 @@ Channel section `channels.openclaw-zaloclawbot` in `openclaw.json`:
 | `textChunkLimit` | `1990` | Max characters per outgoing message (hard-capped at the platform's 2000). |
 | `chunkMode` | `"length"` | `"length"` splits only when a message exceeds the limit; `"newline"` prefers paragraph boundaries. |
 
+## Compatibility check (plugin-inspector)
+
+Every change is checked against the target OpenClaw release with the official
+[`@openclaw/plugin-inspector`](https://github.com/openclaw/plugin-inspector)
+(`0.4.6`, static analysis, offline, no credentials). The plugin declares its
+compatibility in `package.json` (`openclaw.compat.pluginApi: ">=2026.4.10"`)
+and its display name in `openclaw.plugin.json` (`"name": "Zalo ClawBot"`).
+
+```sh
+# From the repo root (or packages/plugin). Fails the command on hard breakages.
+npm run inspect
+
+# Report only: always exits 0, writes the reports below.
+npm run inspect:report
+```
+
+This runs `plugin-inspector check --openclaw-version 2026.11.2` and writes:
+
+- `packages/plugin/reports/plugin-inspector-report.json`
+- `packages/plugin/reports/plugin-inspector-report.md`
+- `packages/plugin/reports/plugin-inspector-issues.md`
+
+Reports are gitignored build output. CI runs the same check on every push and
+pull request to `main` (`.github/workflows/ci.yml`, after the test step).
+
+Current state: **PASS, 0 breakages, 0 warnings** against OpenClaw 2026.11.2.
+Four open items remain, all on the inspector side — none is a plugin defect:
+
+- `missing-compat-record` (P1) — the target OpenClaw compat registry has no
+  record for `channel.runtime.envelope-config-metadata`; only OpenClaw core
+  can add it.
+- `channel-contract-probe`, `package-dependency-install-required`,
+  `package-typescript-source-entrypoint` — inspector proof gaps: the channel
+  envelope/config probes and the cold-import path need runtime capture or an
+  isolated dependency install, which the inspector itself flags as follow-up
+  work. The plugin ships compiled `dist/index.js` as its runtime entrypoint,
+  so the TypeScript-source note does not affect installed users.
+
+Runtime capture is **opt-in, not part of the default check**: it imports
+plugin code (the inspector is not a sandbox) and its output is not redacted,
+so only run it on code you trust:
+
+```sh
+npx @openclaw/plugin-inspector ci --openclaw-version 2026.11.2 --runtime --mock-sdk --allow-execute
+```
+
 ## License
 
 MIT

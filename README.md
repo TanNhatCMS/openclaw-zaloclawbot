@@ -48,7 +48,7 @@ openclaw channels login --channel openclaw-zaloclawbot
 
 ## Development
 
-Current target: OpenClaw **2026.11.2**.
+Current target: OpenClaw **2026.11.5**.
 
 ```sh
 npm install          # install all workspace dependencies
@@ -60,7 +60,7 @@ npm run inspect      # plugin-inspector compatibility check (see packages/plugin
 
 ## Releasing
 
-Releases are automated via GitHub Actions. Package versions use the OpenClaw calendar format; GitHub release tags use the repository's `v0.0.x` release sequence. To publish a new version:
+Releases are automated via GitHub Actions. Package versions use the OpenClaw calendar format; GitHub release tags use the same version (`v<openclaw-version>`, e.g. `v2026.11.5`). To publish a new version:
 
 1. Update the version in all of these files:
    - `packages/plugin/package.json` → `"version"`
@@ -69,8 +69,8 @@ Releases are automated via GitHub Actions. Package versions use the OpenClaw cal
 2. Commit and push:
    ```sh
    git add -A
-   git commit -m "release: 2026.11.2"
-   git tag v2026.11.2
+   git commit -m "release: 2026.11.5"
+   git tag v2026.11.5
    git push origin main --tags
    ```
 3. The [Release workflow](.github/workflows/release.yml) will automatically:

@@ -1,6 +1,6 @@
 # @tannhatcms/openclaw-zaloclawbot
 
-Official Zalo channel plugin for [OpenClaw](https://www.npmjs.com/package/openclaw). Connect a personal Zalo bot to your OpenClaw agent with a QR-scan login — owner-bound, no developer credentials. Built and tested against OpenClaw **2026.11.2**.
+Official Zalo channel plugin for [OpenClaw](https://www.npmjs.com/package/openclaw). Connect a personal Zalo bot to your OpenClaw agent with a QR-scan login — owner-bound, no developer credentials. Built and tested against OpenClaw **2026.11.5**.
 
 ## Prerequisites
 
@@ -126,7 +126,7 @@ npm run inspect
 npm run inspect:report
 ```
 
-This runs `plugin-inspector check --openclaw-version 2026.11.2` and writes:
+This runs `plugin-inspector check --openclaw-version 2026.11.5` and writes:
 
 - `packages/plugin/reports/plugin-inspector-report.json`
 - `packages/plugin/reports/plugin-inspector-report.md`
@@ -135,7 +135,7 @@ This runs `plugin-inspector check --openclaw-version 2026.11.2` and writes:
 Reports are gitignored build output. CI runs the same check on every push and
 pull request to `main` (`.github/workflows/ci.yml`, after the test step).
 
-Current state: **PASS, 0 breakages, 0 warnings** against OpenClaw 2026.11.2.
+Current state: **PASS, 0 breakages, 0 warnings** against OpenClaw 2026.11.5.
 Four open items remain, all on the inspector side — none is a plugin defect:
 
 - `missing-compat-record` (P1) — the target OpenClaw compat registry has no
@@ -153,7 +153,7 @@ plugin code (the inspector is not a sandbox) and its output is not redacted,
 so only run it on code you trust:
 
 ```sh
-npx @openclaw/plugin-inspector ci --openclaw-version 2026.11.2 --runtime --mock-sdk --allow-execute
+npx @openclaw/plugin-inspector ci --openclaw-version 2026.11.5 --runtime --mock-sdk --allow-execute
 ```
 
 ## License

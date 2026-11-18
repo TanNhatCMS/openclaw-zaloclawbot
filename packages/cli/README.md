@@ -33,7 +33,7 @@ Environment variables:
   ```sh
   OPENCLAW_BIN=/path/to/openclaw npx -y @tannhatcms/openclaw-zaloclawbot-cli install
   ```
-- **`ZALOCLAWBOT_PLUGIN_SPEC`** — install an exact spec instead of resolving `@latest`, e.g. `@tannhatcms/openclaw-zaloclawbot@2026.11.2`. Useful for pinning a known-good version or testing a prerelease (OpenClaw rejects `@latest` when it resolves to a prerelease, but accepts the same prerelease as an exact version).
+- **`ZALOCLAWBOT_PLUGIN_SPEC`** — install an exact spec instead of resolving `@latest`, e.g. `@tannhatcms/openclaw-zaloclawbot@2026.11.5`. Useful for pinning a known-good version or testing a prerelease (OpenClaw rejects `@latest` when it resolves to a prerelease, but accepts the same prerelease as an exact version).
 - **`OPENCLAW_STATE_DIR`** — override the OpenClaw state directory (default `~/.openclaw`). Used to locate the managed install for the legacy compatibility link.
 - **`OPENCLAW_HOME`** — home directory under which the state directory lives when `OPENCLAW_STATE_DIR` is not set (default: your OS home directory).
 
@@ -46,7 +46,7 @@ After install, the channel long-polls by default. For production receiving via w
 ## Requirements
 
 - Node.js **>= 22**
-- OpenClaw CLI already installed and on `PATH`. The plugin requires a host **>= 2026.4.10** (`minHostVersion`); the current release is built and tested against OpenClaw **2026.11.2**.
+- OpenClaw CLI already installed and on `PATH`. The plugin requires a host **>= 2026.4.10** (`minHostVersion`); the current release is built and tested against OpenClaw **2026.11.5**.
 
 Full docs: <https://docs.openclaw.ai/channels/zaloclawbot>
 
@@ -55,7 +55,7 @@ Full docs: <https://docs.openclaw.ai/channels/zaloclawbot>
 This package ships only the installer (`bin/install.mjs`, exposed as the `openclaw-zaloclawbot-cli` binary) — it has no build or test scripts of its own. Compatibility of the plugin it installs is checked with the official [OpenClaw Plugin Inspector](https://github.com/openclaw/plugin-inspector) from the repo root:
 
 ```sh
-# Fails on hard compatibility breakages against OpenClaw 2026.11.2.
+# Fails on hard compatibility breakages against OpenClaw 2026.11.5.
 npm run inspect
 
 # Report only: always exits 0.
